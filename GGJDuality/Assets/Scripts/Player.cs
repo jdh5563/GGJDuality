@@ -5,6 +5,12 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     // Fields
+    [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private float moveSpeed;
+    [SerializeField] private float jumpSpeed;
+
+    private Vector2 velocity;
+    private bool isJumping = false;
 
     // Start is called before the first frame update
     void Start()
@@ -15,28 +21,49 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        velocity = rb.velocity;
         PollInput();
+        rb.velocity = velocity;
     }
 
     private void PollInput()
 	{
         if(Input.GetKeyDown(KeyCode.W))
 		{
-            // Jump
+            Jump();
 		}
 
-		if (Input.GetKeyDown(KeyCode.A))
+		if (Input.GetKey(KeyCode.A))
 		{
-            // Move Left
+            velocity.x = -moveSpeed;
 		}
-        else if (Input.GetKeyDown(KeyCode.D))
+        else if (Input.GetKey(KeyCode.D))
 		{
-            // Move Right
-		}
+            velocity.x = moveSpeed;
+        }
+		else
+		{
+            velocity.x = 0;
+        }
+	}
 
-		if (Input.GetKeyDown(KeyCode.Space))
-		{
-            // Toggle Light/Dark Mode
-		}
+    private void Jump()
+	{
+        if (!isJumping)
+        {
+            isJumping = true;
+            velocity.y = jumpSpeed;
+        }
+	}
+
+	private void OnCollisionEnter2D(Collision2D collision)
+	{
+        ContactPoint2D contact = collision.GetContact(0);
+
+        // TODO: Make sure the player makes contact with the TOP of the platform
+		//if(contact.point.x > transform.position.x + transform.localScale.x / 2 && contact.point.x < transform.position.x - transform.localScale.x / 2)
+		//{
+  //          isJumping = false;
+		//}
 	}
 }
