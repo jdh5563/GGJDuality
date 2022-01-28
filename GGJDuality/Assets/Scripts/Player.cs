@@ -19,13 +19,18 @@ public class Player : MonoBehaviour
     {
         velocity = rb.velocity;
         PollInput();
-        rb.velocity = velocity;
+        //rb.velocity = velocity;
     }
 
-    /// <summary>
-    /// Polls the input system for player movement input
-    /// </summary>
-    private void PollInput()
+	private void FixedUpdate()
+	{
+		rb.velocity = velocity;
+	}
+
+	/// <summary>
+	/// Polls the input system for player movement input
+	/// </summary>
+	private void PollInput()
 	{
         // Jump
         if(Input.GetKeyDown(KeyCode.W))
