@@ -26,13 +26,18 @@ public class Player : MonoBehaviour
         rb.velocity = velocity;
     }
 
+    /// <summary>
+    /// Polls the input system for player input
+    /// </summary>
     private void PollInput()
 	{
+        // Jump
         if(Input.GetKeyDown(KeyCode.W))
 		{
             Jump();
 		}
 
+        // Move Left/Right or Stop
 		if (Input.GetKey(KeyCode.A))
 		{
             velocity.x = -moveSpeed;
@@ -47,6 +52,9 @@ public class Player : MonoBehaviour
         }
 	}
 
+    /// <summary>
+    /// Make the player jump and don't allow them to jump until they've landed
+    /// </summary>
     private void Jump()
 	{
         if (!isJumping)
@@ -56,14 +64,12 @@ public class Player : MonoBehaviour
         }
 	}
 
-	private void OnCollisionEnter2D(Collision2D collision)
+    /// <summary>
+    /// Allow the player to jump once the trigger box collider collides with the ground
+    /// </summary>
+    /// <param name="other"></param>
+	private void OnTriggerEnter2D(Collider2D other)
 	{
-        ContactPoint2D contact = collision.GetContact(0);
-
-        // TODO: Make sure the player makes contact with the TOP of the platform
-		//if(contact.point.x > transform.position.x + transform.localScale.x / 2 && contact.point.x < transform.position.x - transform.localScale.x / 2)
-		//{
-  //          isJumping = false;
-		//}
+        isJumping = false;
 	}
 }
