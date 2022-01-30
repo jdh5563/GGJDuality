@@ -17,7 +17,8 @@ public class GameManager : MonoBehaviour
 	private List<GameObject> tilemaps = new List<GameObject>();
 
 	// The background music for the game
-	[SerializeField] private AudioSource backgroundMusic;
+	[SerializeField] private AudioSource lightMusic;
+	[SerializeField] private AudioSource darkMusic;
 
 	// The number of the current level the player is on
 	public static int currentLevelNumber = 0;
@@ -53,6 +54,8 @@ public class GameManager : MonoBehaviour
 
 		currentLevelNumber = 0;
 		totalLevels = tilemaps.Count / 2;
+
+		darkMusic.volume = 0;
 	}
 
 	// Update is called once per frame
@@ -90,10 +93,15 @@ public class GameManager : MonoBehaviour
 				main.backgroundColor = Color.white;
 				startColor = Color.white;
 				endColor = Color.black;
-				backgroundMusic.volume = 1;
+				lightMusic.volume = 1;
+				darkMusic.volume = 0;
 			}
 
-			// Update the active level
+			// Get rid of any visible Canvas if there is one, then update the active level
+			if(activeLevel.transform.parent.childCount > 2)
+			{
+				GameObject.Find("Canvas").SetActive(false);
+			}
 			activeLevel = tilemaps[currentLevelNumber * 2];
 		}
 
@@ -120,7 +128,8 @@ public class GameManager : MonoBehaviour
 				Mathf.Lerp(startColor.g, endColor.g, colorProgress),
 				Mathf.Lerp(startColor.b, endColor.b, colorProgress));
 
-			backgroundMusic.volume = Mathf.Lerp(startColor.r, endColor.r, colorProgress);
+			lightMusic.volume = Mathf.Lerp(startColor.r, endColor.r, colorProgress);
+			darkMusic.volume = Mathf.Lerp(endColor.r, startColor.r, colorProgress);
 			yield return new WaitForFixedUpdate();
 		}
 
