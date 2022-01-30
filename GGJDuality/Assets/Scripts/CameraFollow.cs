@@ -30,8 +30,6 @@ public class CameraFollow : MonoBehaviour
         maxY = tilemap.cellBounds.max.y;
         camOrthographicSize = main.orthographicSize;
         camAspectRatio = main.aspect * camOrthographicSize;
-
-        Debug.Log(minX + camAspectRatio);
     }
 
     // FixedUpdate is called once per fixed frame

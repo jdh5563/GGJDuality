@@ -14,18 +14,19 @@ public class Player : MonoBehaviour
     private Vector2 velocity;
     private bool isJumping = false;
 
-    // Update is called once per frame
-    void Update()
+    // Determines if the player has won the level
+    public bool hasWon = false;
+
+    // The jump sound for the player
+    [SerializeField] private AudioSource jumpAudio;
+
+	// Update is called once per frame
+	void Update()
     {
         velocity = rb.velocity;
         PollInput();
-        //rb.velocity = velocity;
+        rb.velocity = velocity;
     }
-
-	private void FixedUpdate()
-	{
-		rb.velocity = velocity;
-	}
 
 	/// <summary>
 	/// Polls the input system for player movement input
@@ -62,6 +63,7 @@ public class Player : MonoBehaviour
         {
             isJumping = true;
             velocity.y = jumpSpeed;
+            jumpAudio.Play();
         }
 	}
 
@@ -90,9 +92,10 @@ public class Player : MonoBehaviour
                 Tile tile = tilemap.GetTile<Tile>(tilemap.WorldToCell(surroundingTilePosition));
 
                 // The player wins if the "Flag" tile is adjacent
-                if (tile != null && tile.name == "Flag")
+                if (!hasWon && tile != null && tile.name == "Flag")
                 {
-                    Debug.Log("Player wins!");
+                    GameManager.currentLevelNumber++;
+                    hasWon = true;
                 }
             }
         }

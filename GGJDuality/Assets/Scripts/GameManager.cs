@@ -10,18 +10,43 @@ public class GameManager : MonoBehaviour
 
 	// Controls going back and forth between black and white worlds
 	private float colorProgress = 0;
-	[SerializeField] private Color startColor = Color.black;
-	[SerializeField] private Color endColor = Color.white;
+	[SerializeField] private Color startColor;
+	[SerializeField] private Color endColor;
 
-	private GameObject[] tilemaps;
+	// The black and white tilemaps
+	private List<GameObject> tilemaps = new List<GameObject>();
+
+	// The background music for the game
+	[SerializeField] private AudioSource backgroundMusic;
+
+	// The number of the current level the player is on
+	public static int currentLevelNumber = 0;
+
+	// The total number of levels in the game
+	private int totalLevels;
+
+	// The current level the player is on
+	private GameObject activeLevel;
+
+	// The player and its spawn point
+	[SerializeField] private GameObject player;
+	[SerializeField] private GameObject playerSpawn;
 
 	// Start is called before the first frame update
 	void Start()
 	{
 		main = Camera.main;
-		tilemaps = GameObject.FindGameObjectsWithTag("Level");
-		tilemaps[0].SetActive(true);
-		tilemaps[1].SetActive(false);
+		tilemaps.AddRange(GameObject.FindGameObjectsWithTag("Level"));
+		activeLevel = tilemaps[0];
+		tilemaps[0].SetActive(false);
+		tilemaps[1].SetActive(true);
+
+		for(int i = 2; i < tilemaps.Count; i++)
+		{
+			tilemaps[i].SetActive(false);
+		}
+
+		totalLevels = tilemaps.Count / 2;
 	}
 
 	// Update is called once per frame
@@ -31,6 +56,39 @@ public class GameManager : MonoBehaviour
 		if (Input.GetKeyDown(KeyCode.Space))
 		{
 			StartCoroutine(LERPBackgroundColor(startColor, endColor));
+		}
+
+		// Check if we have entered a new level
+		if (2 * currentLevelNumber != tilemaps.IndexOf(activeLevel))
+		{
+			if(currentLevelNumber == totalLevels)
+			{
+				// TODO: Be able to change scenes
+				return;
+			}
+
+			for(int i = -2; i < 2; i++)
+			{
+				// Set the old level to be inactive and the new level to be active
+				tilemaps[currentLevelNumber * 2 + i].SetActive(i == 1 ? true : false);
+			}
+
+			// Reset the player's position
+			player.transform.position = playerSpawn.transform.position;
+			player.GetComponent<Player>().hasWon = false;
+
+			// If the background is not white, we need to update some variables
+			if(main.backgroundColor != Color.white)
+			{
+				StopAllCoroutines();
+				main.backgroundColor = Color.white;
+				startColor = Color.white;
+				endColor = Color.black;
+				backgroundMusic.volume = 1;
+			}
+
+			// Update the active level
+			activeLevel = tilemaps[currentLevelNumber * 2];
 		}
 	}
 
@@ -49,6 +107,8 @@ public class GameManager : MonoBehaviour
 				Mathf.Lerp(startColor.r, endColor.r, colorProgress),
 				Mathf.Lerp(startColor.g, endColor.g, colorProgress),
 				Mathf.Lerp(startColor.b, endColor.b, colorProgress));
+
+			backgroundMusic.volume = Mathf.Lerp(startColor.r, endColor.r, colorProgress);
 			yield return new WaitForFixedUpdate();
 		}
 
@@ -64,8 +124,8 @@ public class GameManager : MonoBehaviour
 	/// </summary>
 	private void ToggleTilemaps()
 	{
-		foreach(GameObject tilemap in tilemaps) {
-			tilemap.SetActive(!tilemap.activeSelf);
+		for (int i = 0; i < 2; i++) {
+			tilemaps[2 * currentLevelNumber + i].SetActive(!tilemaps[2 * currentLevelNumber + i].activeSelf);
 		}
 	}
 }
