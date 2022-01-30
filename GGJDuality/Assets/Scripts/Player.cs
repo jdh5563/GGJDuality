@@ -20,12 +20,20 @@ public class Player : MonoBehaviour
     // The jump sound for the player
     [SerializeField] private AudioSource jumpAudio;
 
+    // The player's animator
+    [SerializeField] Animator animator;
+
+    // The player's Sprite renderer
+    [SerializeField] SpriteRenderer spriteRenderer;
+
 	// Update is called once per frame
 	void Update()
     {
         velocity = rb.velocity;
         PollInput();
         rb.velocity = velocity;
+        animator.SetFloat("Speed", Mathf.Abs(rb.velocity.x));
+        animator.SetBool("IsJumping", isJumping);
     }
 
 	/// <summary>
@@ -43,10 +51,12 @@ public class Player : MonoBehaviour
 		if (Input.GetKey(KeyCode.A))
 		{
             velocity.x = -moveSpeed;
+            spriteRenderer.flipX = true;
 		}
         else if (Input.GetKey(KeyCode.D))
 		{
             velocity.x = moveSpeed;
+            spriteRenderer.flipX = false;
         }
 		else
 		{
