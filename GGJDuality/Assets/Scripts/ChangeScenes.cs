@@ -12,7 +12,6 @@ public class ChangeScenes : MonoBehaviour
 
 	public void LoadGame()
 	{
-		GameManager.currentLevelNumber = 0;
 		SceneManager.LoadScene("John Scene");
 	}
 

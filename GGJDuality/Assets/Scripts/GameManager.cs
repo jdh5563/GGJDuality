@@ -36,7 +36,12 @@ public class GameManager : MonoBehaviour
 	void Start()
 	{
 		main = Camera.main;
-		tilemaps.AddRange(GameObject.FindGameObjectsWithTag("Level"));
+		tilemaps.Add(GameObject.Find("Tutorial").transform.GetChild(0).gameObject);
+		tilemaps.Add(GameObject.Find("Tutorial").transform.GetChild(1).gameObject);
+		tilemaps.Add(GameObject.Find("Level1").transform.GetChild(0).gameObject);
+		tilemaps.Add(GameObject.Find("Level1").transform.GetChild(1).gameObject);
+		tilemaps.Add(GameObject.Find("Level2").transform.GetChild(0).gameObject);
+		tilemaps.Add(GameObject.Find("Level2").transform.GetChild(1).gameObject);
 		activeLevel = tilemaps[0];
 		tilemaps[0].SetActive(false);
 		tilemaps[1].SetActive(true);
@@ -46,6 +51,7 @@ public class GameManager : MonoBehaviour
 			tilemaps[i].SetActive(false);
 		}
 
+		currentLevelNumber = 0;
 		totalLevels = tilemaps.Count / 2;
 	}
 
