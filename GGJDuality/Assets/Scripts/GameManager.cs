@@ -63,7 +63,7 @@ public class GameManager : MonoBehaviour
 		{
 			if(currentLevelNumber == totalLevels)
 			{
-				// TODO: Be able to change scenes
+				GetComponent<ChangeScenes>().LoadWinMenu();
 				return;
 			}
 
@@ -89,6 +89,12 @@ public class GameManager : MonoBehaviour
 
 			// Update the active level
 			activeLevel = tilemaps[currentLevelNumber * 2];
+		}
+
+		// Check if the player has fallen off the level beyond return
+		if(player.transform.position.y < activeLevel.GetComponent<Tilemap>().cellBounds.yMin - 10)
+		{
+			GetComponent<ChangeScenes>().LoadLoseMenu();
 		}
 	}
 
